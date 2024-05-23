@@ -3,8 +3,8 @@ const { Firestore } = require('@google-cloud/firestore');
 class StoreData {
   constructor() {
     this.firestore = new Firestore({
-      projectId: 'submissionmlgc-zhafran',
-      keyFilename: 'firestore-access.json',
+      projectId: process.env.PROJECT_ID,
+      keyFilename: process.env.SERVICE_ACCOUNT_KEY,
     });
   }
 

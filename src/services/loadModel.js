@@ -1,4 +1,4 @@
-const MODEL_URL = 'https://storage.googleapis.com/ml-app-12/submissions-model/model.json';
+const MODEL_URL = process.env.MODEL_URL;
 
 const tf = require('@tensorflow/tfjs-node');
 async function loadModel() {
