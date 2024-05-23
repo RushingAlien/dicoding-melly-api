@@ -7,7 +7,7 @@ FROM node:18
 COPY . .
 
 # Install production dependencies.
-RUN npm install --only=production
+RUN npm install --omit-dev
 
 # Run the web service on container startup.
 CMD [ "npm", "run", "start" ]
