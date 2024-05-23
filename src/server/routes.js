@@ -1,4 +1,5 @@
 const { postPredictHandler, getHistoryHandler } = require('../server/handler');
+const upload = require('../server/multer');
 
 const routes = [
   {
@@ -7,9 +8,9 @@ const routes = [
     handler: postPredictHandler,
     options: {
       payload: {
+        maxBytes: 1000000,
         allow: 'multipart/form-data',
         multipart: true,
-        maxBytes: 1000000,
       },
     },
   },

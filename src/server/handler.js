@@ -1,21 +1,21 @@
 const predictClassification = require('../services/inferenceService');
 const crypto = require('crypto');
-const storeData = require('../services/storeData');
+const StoreData = require('../services/storeData');
 const InputError = require('../exceptions/InputError');
-const getData = require('../services/getData');
+
+const storeData = new StoreData();
 
 async function postPredictHandler(request, h) {
   try {
     const { image } = request.payload;
-
 
     if (!image) {
       throw new InputError('Image is required for prediction');
     }
 
     const { model } = request.server.app;
-    const { label, suggestion } = await predictClassification(model, image);
 
+    const { label, suggestion } = await predictClassification(model, image);
     const id = crypto.randomUUID();
     const createdAt = new Date().toISOString();
 
@@ -26,7 +26,7 @@ async function postPredictHandler(request, h) {
       createdAt: createdAt,
     };
 
-    await storeData(id, data);
+    await storeData.save('predictions', id, data);
 
     const response = h.response({
       status: 'success',
@@ -58,33 +58,22 @@ async function postPredictHandler(request, h) {
 
 async function getHistoryHandler(request, h) {
   try {
-    const data = await getData();
-    const response = h.response({
-      status: 'success',
-      data: data,
-    });
-
-    response.code(200);
-    return response;
+    const histories = await storeData.getAll('predictions');
+    return h
+      .response({
+        status: 'success',
+        data: histories.map((doc) => ({ id: doc.id, history: doc.data })),
+      })
+      .code(200);
   } catch (error) {
-    if (error instanceof InputError) {
-      const response = h.response({
+    return h
+      .response({
         status: 'fail',
-        message: error.message,
-      });
-      response.code(error.statusCode);
-      return response;
-    }
-
-    const response = h.response({
-      status: 'error',
-      message: 'An unexpected error occurred',
-    });
-    response.code(500);
-    return response;
+        message: 'Failed to retrieve prediction histories',
+      })
+      .code(500);
   }
 }
-
 
 module.exports = {
   postPredictHandler,
