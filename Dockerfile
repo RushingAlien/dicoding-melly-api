@@ -13,4 +13,4 @@ RUN npm install --only=production
 CMD [ "npm", "run", "start" ]
 
 # Document that the service listens on port 8080.
-EXPOSE 8000
+EXPOSE 3000
