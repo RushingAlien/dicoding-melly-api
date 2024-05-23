@@ -1,2 +1,4 @@
 node_modules/
 submissions-model*
+data-test-submissions/
+firestore-access.json.bak
