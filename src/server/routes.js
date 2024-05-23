@@ -1,4 +1,4 @@
-const postPredictHandler = require('../server/handler');
+const { postPredictHandler, getHistoryHandler } = require('../server/handler');
 
 const routes = [
   {
@@ -7,11 +7,20 @@ const routes = [
     handler: postPredictHandler,
     options: {
       payload: {
-        /*Mengizinkan data berupa gambar*/
         allow: 'multipart/form-data',
         multipart: true,
         maxBytes: 1000000,
       },
+    },
+  },
+  {
+    path: '/predict/histories',
+    method: 'GET',
+    handler: getHistoryHandler,
+    options: {
+      tags: ['api'],
+      description: 'Get prediction history',
+      notes: 'Returns all prediction history stored in Firestore',
     },
   },
 ];
