@@ -2,5 +2,5 @@ node_modules/
 submissions-model*
 data-test-submissions/
 # firestore-access.json
-firestore-access.json.bak
+firestore-access.json.bak*
 data-test-submissions.zip

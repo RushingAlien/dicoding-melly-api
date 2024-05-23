@@ -1,13 +1,13 @@
 const predictClassification = require('../services/inferenceService');
 const crypto = require('crypto');
-const StoreData = require('../services/storeData');
+const storeData = require('../services/storeData');
 const InputError = require('../exceptions/InputError');
-
-const storeData = new StoreData();
+const getData = require('../services/getData');
 
 async function postPredictHandler(request, h) {
   try {
     const { image } = request.payload;
+
 
     if (!image) {
       throw new InputError('Image is required for prediction');
@@ -26,7 +26,7 @@ async function postPredictHandler(request, h) {
       createdAt: createdAt,
     };
 
-    await storeData.save('predictions', id, data);
+    await storeData(id, data);
 
     const response = h.response({
       status: 'success',
@@ -58,22 +58,33 @@ async function postPredictHandler(request, h) {
 
 async function getHistoryHandler(request, h) {
   try {
-    const histories = await storeData.getAll('predictions');
-    return h
-      .response({
-        status: 'success',
-        data: histories.map((doc) => ({ id: doc.id, history: doc.data })),
-      })
-      .code(200);
+    const data = await getData();
+    const response = h.response({
+      status: 'success',
+      data: data,
+    });
+
+    response.code(200);
+    return response;
   } catch (error) {
-    return h
-      .response({
+    if (error instanceof InputError) {
+      const response = h.response({
         status: 'fail',
-        message: 'Failed to retrieve prediction histories',
-      })
-      .code(500);
+        message: error.message,
+      });
+      response.code(error.statusCode);
+      return response;
+    }
+
+    const response = h.response({
+      status: 'error',
+      message: 'An unexpected error occurred',
+    });
+    response.code(500);
+    return response;
   }
 }
+
 
 module.exports = {
   postPredictHandler,

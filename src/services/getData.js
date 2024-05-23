@@ -4,8 +4,8 @@ const InputError = require('../exceptions/InputError');
 async function getData() {
   try {
     const db = new Firestore({
-      projectId: 'submissionmlgc-zhafran',
-      keyFilename: 'firestore-access.json',
+      projectID: process.env.PROJECT_ID,
+      keyFilename: process.env.SERVICE_ACCOUNT_KEY,
     });
     const predictCollection = db.collection('predictions');
     const snapshot = await predictCollection.get();
