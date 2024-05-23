@@ -17,17 +17,16 @@ async function predictClassification(model, image) {
     const prediction = model.predict(tensor);
     const score = await prediction.data();
     const confidenceScore = Math.max(...score) * 100;
-    const classResult = tf.argMax(prediction, 1).dataSync()[0];
+    const classResult = confidenceScore>50 ? 0 : 1;
     const label = classes[classResult];
 
     let suggestion = '';
 
     if (label === 'Cancer') {
-      suggestion =
-        'Segera konsultasi dengan dokter terdekat jika ukuran semakin membesar dengan cepat, mudah luka atau berdarah.';
-    } else {
-      suggestion =
-        'Segera periksa ke dokter!.';
+      suggestion = 'Segera periksa ke dokter!';
+    }
+    if (label === 'Non-cancer') {
+      suggestion = 'Anda sehat!';
     }
 
     return { label, suggestion };
